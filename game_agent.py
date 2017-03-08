@@ -173,7 +173,33 @@ class CustomPlayer:
             raise Timeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        legal_moves = game.get_legal_moves()
+        # If I am on a leaf or I lost or won, I return the score
+        if depth == 0 or not legal_moves:
+            return self.score(game, self), (-1,-1)
+        else:
+            if maximizing_player:
+                best_score = float('-inf')
+                best_move = (-1,-1)
+                for m in legal_moves:
+                    score_tuple = self.minimax(game.forecast_move(m), depth-1,not maximizing_player)
+                    score_result = score_tuple[0]
+                    if best_score < score_result:
+                        best_score = score_result
+                        best_move = m
+                return best_score, best_move
+            # We want to minimize
+            else:
+                best_score = float('inf')
+                best_move = (-1,-1)
+                for m in legal_moves:
+                    score_tuple = self.minimax(game.forecast_move(m), depth-1,not maximizing_player)
+                    score_result = score_tuple[0]
+                    if best_score > score_result:
+                        best_score = score_result
+                        best_move = m
+                return best_score, best_move
+        #raise NotImplementedError
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -217,4 +243,39 @@ class CustomPlayer:
             raise Timeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        legal_moves = game.get_legal_moves()
+        # If I am on a leaf or I lost or won, I return the score
+        if depth == 0 or not legal_moves:
+            return self.score(game, self), (-1,-1)
+        else:
+            if maximizing_player:
+                best_move = (-1,-1)
+                value = float('-inf')
+                for m in legal_moves:
+                    tmp_val = self.alphabeta(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)[0]
+                    if value < tmp_val:
+                        value = tmp_val
+                        best_move = m
+
+                    alpha = max(alpha, value)
+                    if alpha >= beta:
+                        break
+                return value, best_move
+            # We want to minimize
+            else:
+                best_move = (-1,-1)
+                value = float('inf')
+                for m in legal_moves:
+                    #value = min(value, self.alphabeta(game.forecast_move(m), depth-1,alpha, beta, not maximizing_player[0]))
+
+                    tmp_val = self.alphabeta(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)[0]
+                    if value > tmp_val:
+                        value = tmp_val
+                        best_move = m
+
+                    beta = min(beta, value)
+                    #best_move = m
+                    if beta <= alpha:
+                        break
+                return beta, best_move
+        #raise NotImplementedError
