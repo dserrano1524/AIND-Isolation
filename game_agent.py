@@ -38,6 +38,8 @@ def custom_score(game, player):
     """
 
     # TODO: finish this function!
+    # For my Heurisitc, I will define that float(-inf) will be a bad move
+    # While float(inf) will be a good move
     raise NotImplementedError
 
 
@@ -123,20 +125,42 @@ class CustomPlayer:
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
+        if not legal_moves:
+            return (-1.-1)
+        # MinMax and alphabeta return a list that contains a float and a tuple
+        best_move_list = (None, (-1, -1))
 
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
-            pass
+            if self.iterative:
+                depth = 1
+                # We iterate
+                while True:
+                    if self.method =='minimax':
+                        best_move_list = self.minimax(game,depth)
+                    else:
+                        best_move_list = self.alphabeta(game,depth)
+                    depth += 1
+                    # If the score defined by my heuristic is positive
+                    # that is the best move, I reach my goal and stop iterating
+                    if best_move_list[0] == float('inf') or best_move_list[0] == float('-inf'):
+                        break
+            else:
+                #We don-t want to iterate
+                if self.method =='minimax':
+                    best_move_list = self.minimax(game,self.search_depth)
+                else:
+                    best_move_list = self.alphabeta(game, self.search_depth)
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
             pass
-
         # Return the best move from the last completed search iteration
-        raise NotImplementedError
+        return best_move_list[1]
+        #raise NotImplementedError
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
