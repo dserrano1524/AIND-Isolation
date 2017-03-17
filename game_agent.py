@@ -96,26 +96,18 @@ def heuristic_3(game, player):
     if game.is_winner(player):
         return float("inf")
     corners_list = [(0,0), (6,6), (0,6), (6,0)]
-    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
-
     own_moves = game.get_legal_moves(player)
     opo_moves = game.get_legal_moves(game.get_opponent(player))
     num_own_moves = len(own_moves)
     num_opo_moves = len(opo_moves)
     num_own_corners = 0
     num_opo_corners = 0
-    num_own_walls = 0
-    num_opo_walls = 0
     for move in own_moves:
         if move in corners_list:
             num_own_corners += 1
-        if move in walls_list:
-            num_own_walls += 1
     for move in opo_moves:
         if move in corners_list:
             num_opo_corners += 1
-        if move in walls_list:
-            num_opo_walls += 1
     return float((num_own_moves-num_own_corners)-(num_opo_moves-num_opo_corners))
 
 def heuristic_4(game, player):
@@ -143,26 +135,18 @@ def heuristic_4(game, player):
     if game.is_winner(player):
         return float("inf")
     corners_list = [(0,0), (6,6), (0,6), (6,0)]
-    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
-
     own_moves = game.get_legal_moves(player)
     opo_moves = game.get_legal_moves(game.get_opponent(player))
     num_own_moves = len(own_moves)
     num_opo_moves = len(opo_moves)
     num_own_corners = 0
     num_opo_corners = 0
-    num_own_walls = 0
-    num_opo_walls = 0
     for move in own_moves:
         if move in corners_list:
             num_own_corners += 1
-        if move in walls_list:
-            num_own_walls += 1
     for move in opo_moves:
         if move in corners_list:
             num_opo_corners += 1
-        if move in walls_list:
-            num_opo_walls += 1
     return float((num_own_moves-num_own_corners)-(num_opo_moves+num_opo_corners))
 
 def heuristic_5(game, player):
@@ -189,32 +173,72 @@ def heuristic_5(game, player):
 
     if game.is_winner(player):
         return float("inf")
-    corners_list = [(0,0), (6,6), (0,6), (6,0)]
     walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
 
     own_moves = game.get_legal_moves(player)
     opo_moves = game.get_legal_moves(game.get_opponent(player))
     num_own_moves = len(own_moves)
     num_opo_moves = len(opo_moves)
-    num_own_corners = 0
-    num_opo_corners = 0
     num_own_walls = 0
     num_opo_walls = 0
     for move in own_moves:
-        if move in corners_list:
-            num_own_corners += 1
         if move in walls_list:
             num_own_walls += 1
     for move in opo_moves:
-        if move in corners_list:
-            num_opo_corners += 1
         if move in walls_list:
             num_opo_walls += 1
     return float((num_own_moves-num_own_walls)-(num_opo_moves+num_opo_walls))
 
 def heuristic_6(game, player):
     """
-    Second heuristic attempt.
+    In this heuristic,
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
+
+    own_moves = game.get_legal_moves(player)
+    opo_moves = game.get_legal_moves(game.get_opponent(player))
+    num_own_moves = len(own_moves)
+    num_opo_moves = len(opo_moves)
+    num_own_walls = 0
+    num_opo_walls = 0
+    for move in own_moves:
+        if move in walls_list:
+            num_own_walls += 1
+    for move in opo_moves:
+        if move in walls_list:
+            num_opo_walls += 1
+    return float((num_own_moves-num_own_walls)-(num_opo_moves-num_opo_walls))
+
+def heuristic_7(game, player):
+    """
+    In this heuristic, the number of corners, walls(boxes in the edge of the
+    board that are not corners), adjacent walls (boxes beside a wall), and boxes
+    adjacent to the center (and the center included) are counted. The score
+    returned is the number of moves available of the player adding the number of
+    boxes adjacent to the center and boxes adjacent to the walls and substracting
+    the number of walls and corners, this in an attempt to penalize paths that
+    lead playing on walls and corners and rewarding paths moving in the areas
+    where more moves are available.
 
     Parameters
     ----------
@@ -237,8 +261,10 @@ def heuristic_6(game, player):
     if game.is_winner(player):
         return float("inf")
     corners_list = [(0,0), (6,6), (0,6), (6,0)]
-    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
-
+    walls_list = [(0,1),(0,2), (0,3),(0,4),(0,5),(1,0),(2,0),(3,0),(4,0),(5,0),(6,1),(6,2),(6,3),(6,4),(6,5),(1,6),(2,6),(3,6),(4,6),(5,6)]
+    adj_wall_list = [(1,1),(1,2),(1,3),(1,4),(1,5),(5,1),(5,2),(5,3),(5,4),(5,5),(2,1),(3,1),(4,1),(2,5),(3,5),(4,5)]
+    #The centre is included in this list
+    adj_centre = [(3,3),(2,2),(2,3),(2,4),]
     own_moves = game.get_legal_moves(player)
     opo_moves = game.get_legal_moves(game.get_opponent(player))
     num_own_moves = len(own_moves)
@@ -247,17 +273,78 @@ def heuristic_6(game, player):
     num_opo_corners = 0
     num_own_walls = 0
     num_opo_walls = 0
+    num_own_adj_walls = 0
+    num_opo_adj_walls = 0
+    num_own_adj_centre = 0
+    num_opo_adj_centre = 0
     for move in own_moves:
         if move in corners_list:
             num_own_corners += 1
         if move in walls_list:
             num_own_walls += 1
+        if move in adj_wall_list:
+            num_own_adj_walls += 1
+        if move in adj_centre:
+            num_own_adj_centre += 1
     for move in opo_moves:
         if move in corners_list:
             num_opo_corners += 1
         if move in walls_list:
             num_opo_walls += 1
-    return float((num_own_moves-num_own_walls)-(num_opo_moves-num_opo_walls))
+        if move in adj_wall_list:
+            num_opo_adj_walls += 1
+        if move in adj_centre:
+            num_opo_adj_centre += 1
+    return float((num_own_moves+num_own_adj_centre+num_own_adj_walls-num_own_walls-num_own_corners)-(num_opo_moves+num_opo_adj_centre+num_opo_adj_walls-num_opo_walls-num_opo_corners))
+
+def get_max_path(game, player):
+    """
+    Returns the max number of steps that a player can take with each legal move
+    If the player can move more than 8 times, 8 is returned. The idea is to Find
+    the paths were the players have few moves and not take them
+    """
+    max_path = 0
+    legal_moves = game.get_legal_moves(player)
+    if not legal_moves or len(legal_moves == 0):
+        return max_path
+    for move in legal_moves:
+        path = get_max_path(game.forecast_move(move),player) + 1
+        if path > max_path:
+            max_path = path
+        if max_depth>8:
+            break
+    return max_path
+
+def heuristic_8(game, player):
+    """
+    In this heuristic, the max path of a player is calculated. If a player has a
+    longer path to travel than his opponent, he has a better chance to win.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    player_max_path = get_max_path(game, player)
+    oponent_max_path = get_max_path(game, game.get_opponent(player))
+    if player_max_path == oponent_max_path:
+        return 0
+    return float(player_max_path-oponent_max_path)
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -285,7 +372,7 @@ def custom_score(game, player):
     # TODO: finish this function!
     # For my Heurisitc, I will define that float(-inf) will be a bad move
     # While float(inf) will be a good move
-    return heuristic_6(game, player)
+    return heuristic_8(game, player)
     #raise NotImplementedError
 
 
