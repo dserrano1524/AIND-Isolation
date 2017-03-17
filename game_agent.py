@@ -13,6 +13,251 @@ class Timeout(Exception):
     """Subclass base exception for code clarity."""
     pass
 
+def heuristic_1(game, player):
+    """
+    First heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float((own_moves * 2) - opp_moves)
+
+def heuristic_2(game, player):
+    """
+    Second heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    player_possition = game.get_player_location(player)
+    opponent_possition = game.get_player_location(game.get_opponent(player))
+    return float(abs(sum(player_possition) - sum(opponent_possition)))
+
+def heuristic_3(game, player):
+    """
+    Second heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    corners_list = [(0,0), (6,6), (0,6), (6,0)]
+    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
+
+    own_moves = game.get_legal_moves(player)
+    opo_moves = game.get_legal_moves(game.get_opponent(player))
+    num_own_moves = len(own_moves)
+    num_opo_moves = len(opo_moves)
+    num_own_corners = 0
+    num_opo_corners = 0
+    num_own_walls = 0
+    num_opo_walls = 0
+    for move in own_moves:
+        if move in corners_list:
+            num_own_corners += 1
+        if move in walls_list:
+            num_own_walls += 1
+    for move in opo_moves:
+        if move in corners_list:
+            num_opo_corners += 1
+        if move in walls_list:
+            num_opo_walls += 1
+    return float((num_own_moves-num_own_corners)-(num_opo_moves-num_opo_corners))
+
+def heuristic_4(game, player):
+    """
+    Second heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    corners_list = [(0,0), (6,6), (0,6), (6,0)]
+    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
+
+    own_moves = game.get_legal_moves(player)
+    opo_moves = game.get_legal_moves(game.get_opponent(player))
+    num_own_moves = len(own_moves)
+    num_opo_moves = len(opo_moves)
+    num_own_corners = 0
+    num_opo_corners = 0
+    num_own_walls = 0
+    num_opo_walls = 0
+    for move in own_moves:
+        if move in corners_list:
+            num_own_corners += 1
+        if move in walls_list:
+            num_own_walls += 1
+    for move in opo_moves:
+        if move in corners_list:
+            num_opo_corners += 1
+        if move in walls_list:
+            num_opo_walls += 1
+    return float((num_own_moves-num_own_corners)-(num_opo_moves+num_opo_corners))
+
+def heuristic_5(game, player):
+    """
+    Second heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    corners_list = [(0,0), (6,6), (0,6), (6,0)]
+    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
+
+    own_moves = game.get_legal_moves(player)
+    opo_moves = game.get_legal_moves(game.get_opponent(player))
+    num_own_moves = len(own_moves)
+    num_opo_moves = len(opo_moves)
+    num_own_corners = 0
+    num_opo_corners = 0
+    num_own_walls = 0
+    num_opo_walls = 0
+    for move in own_moves:
+        if move in corners_list:
+            num_own_corners += 1
+        if move in walls_list:
+            num_own_walls += 1
+    for move in opo_moves:
+        if move in corners_list:
+            num_opo_corners += 1
+        if move in walls_list:
+            num_opo_walls += 1
+    return float((num_own_moves-num_own_walls)-(num_opo_moves+num_opo_walls))
+
+def heuristic_6(game, player):
+    """
+    Second heuristic attempt.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    corners_list = [(0,0), (6,6), (0,6), (6,0)]
+    walls_list = [(0,0), (0,1),(0,2), (0,3),(0,4),(0,5),(0,6),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(1,6),(2,6),(3,6),(4,6),(5,6)]
+
+    own_moves = game.get_legal_moves(player)
+    opo_moves = game.get_legal_moves(game.get_opponent(player))
+    num_own_moves = len(own_moves)
+    num_opo_moves = len(opo_moves)
+    num_own_corners = 0
+    num_opo_corners = 0
+    num_own_walls = 0
+    num_opo_walls = 0
+    for move in own_moves:
+        if move in corners_list:
+            num_own_corners += 1
+        if move in walls_list:
+            num_own_walls += 1
+    for move in opo_moves:
+        if move in corners_list:
+            num_opo_corners += 1
+        if move in walls_list:
+            num_opo_walls += 1
+    return float((num_own_moves-num_own_walls)-(num_opo_moves-num_opo_walls))
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -40,7 +285,8 @@ def custom_score(game, player):
     # TODO: finish this function!
     # For my Heurisitc, I will define that float(-inf) will be a bad move
     # While float(inf) will be a good move
-    raise NotImplementedError
+    return heuristic_6(game, player)
+    #raise NotImplementedError
 
 
 class CustomPlayer:
@@ -128,7 +374,7 @@ class CustomPlayer:
         if not legal_moves:
             return (-1.-1)
         # MinMax and alphabeta return a list that contains a float and a tuple
-        best_move_list = (None, (-1, -1))
+        best_move_list = (None, (3,3))
 
         try:
             # The search method call (alpha beta or minimax) should happen in
@@ -156,7 +402,7 @@ class CustomPlayer:
                     best_move_list = self.alphabeta(game, self.search_depth)
 
         except Timeout:
-            # Handle any actions required at timeout, if necessary
+            # no actions are necessary as we save the best move in each iteration
             pass
         # Return the best move from the last completed search iteration
         return best_move_list[1]
