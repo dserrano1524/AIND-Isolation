@@ -305,13 +305,13 @@ def get_max_path(game, player):
     """
     max_path = 0
     legal_moves = game.get_legal_moves(player)
-    if not legal_moves or len(legal_moves == 0):
+    if not legal_moves:
         return max_path
     for move in legal_moves:
         path = get_max_path(game.forecast_move(move),player) + 1
         if path > max_path:
             max_path = path
-        if max_depth>8:
+        if max_path>8:
             break
     return max_path
 
