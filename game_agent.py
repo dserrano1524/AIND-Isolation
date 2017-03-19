@@ -44,8 +44,10 @@ def heuristic_1(game, player):
 
 def heuristic_2(game, player):
     """
-    Second heuristic attempt.
-
+    In this heuristic, the distance between 2 players is computed as the score.
+    The hypothesis is: If two players are far from each other, it’s better than
+    if they are close, as the opponent move will be less likely to occupy one of
+    the legal moves from the active player.
     Parameters
     ----------
     game : `isolation.Board`
@@ -73,8 +75,10 @@ def heuristic_2(game, player):
 
 def heuristic_3(game, player):
     """
-    Second heuristic attempt.
-
+    In this heuristic, if a player legal moves contains corners, the number of
+    corners is substracted from the number of legal moves.This, to avoid
+    selecting scenarios where the player heads to a corner. Both the oponent
+    and the player are penalized
     Parameters
     ----------
     game : `isolation.Board`
@@ -112,7 +116,10 @@ def heuristic_3(game, player):
 
 def heuristic_4(game, player):
     """
-    Second heuristic attempt.
+    In this heuristic, if a player legal moves contains corners, the number of
+    corners is substracted from the number of legal moves.This, to avoid
+    selecting scenarios where the player heads to a corner. The current player
+    is penalized and the opponent is rewarded
 
     Parameters
     ----------
@@ -151,7 +158,12 @@ def heuristic_4(game, player):
 
 def heuristic_5(game, player):
     """
-    Second heuristic attempt.
+    In this heuristic, the number of legal moves that are on a wall (max 4) are
+    counted for both the player and the opponent. The score is calculated using
+    the number of legal moves available - the number of moves in the walls as a
+    way to penalize moves that lead to restricted movement. If the opponent
+    has moves in the wall, it is rewarded, as we assume the opponent will avoid
+    those moves.
 
     Parameters
     ----------
@@ -233,9 +245,9 @@ def heuristic_7(game, player):
     """
     In this heuristic, the number of corners, walls(boxes in the edge of the
     board that are not corners), adjacent walls (boxes beside a wall), and boxes
-    adjacent to the center (and the center included) are counted. The score
+    adjacent to the centre (and the centre included) are counted. The score
     returned is the number of moves available of the player adding the number of
-    boxes adjacent to the center and boxes adjacent to the walls and substracting
+    boxes adjacent to the centre and boxes adjacent to the walls and subtracting
     the number of walls and corners, this in an attempt to penalize paths that
     lead playing on walls and corners and rewarding paths moving in the areas
     where more moves are available.
@@ -297,7 +309,7 @@ def heuristic_7(game, player):
             num_opo_adj_centre += 1
     return float((num_own_moves+num_own_adj_centre+num_own_adj_walls-num_own_walls-num_own_corners)-(num_opo_moves+num_opo_adj_centre+num_opo_adj_walls-num_opo_walls-num_opo_corners))
 
-def get_max_path(game, player):
+def get_max_path(game, player, depth):
     """
     Returns the max number of steps that a player can take with each legal move
     If the player can move more than 8 times, 8 is returned. The idea is to Find
@@ -305,10 +317,10 @@ def get_max_path(game, player):
     """
     max_path = 0
     legal_moves = game.get_legal_moves(player)
-    if not legal_moves:
+    if not legal_moves or depth == 0:
         return max_path
     for move in legal_moves:
-        path = get_max_path(game.forecast_move(move),player) + 1
+        path = get_max_path(game.forecast_move(move),player,depth-1) + 1
         if path > max_path:
             max_path = path
         if max_path>8:
@@ -340,8 +352,8 @@ def heuristic_8(game, player):
 
     if game.is_winner(player):
         return float("inf")
-    player_max_path = get_max_path(game, player)
-    oponent_max_path = get_max_path(game, game.get_opponent(player))
+    player_max_path = get_max_path(game, player, 8)
+    oponent_max_path = get_max_path(game, game.get_opponent(player),8)
     if player_max_path == oponent_max_path:
         return 0
     return float(player_max_path-oponent_max_path)
@@ -372,7 +384,7 @@ def custom_score(game, player):
     # TODO: finish this function!
     # For my Heurisitc, I will define that float(-inf) will be a bad move
     # While float(inf) will be a good move
-    return heuristic_8(game, player)
+    return heuristic_7(game, player)
     #raise NotImplementedError
 
 
